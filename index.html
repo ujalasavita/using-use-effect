@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React useEffect Assignment</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://www.unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://www.unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const FetchDataComponent = () => {
+            const [data, setData] = useState([]);
+
+            useEffect(() => {
+                const fetchData = async () => {
+                    try {
+                        const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+                        setData(response.data);
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                };
+
+                fetchData();
+            }, []);
+
+            return (
+                <div>
+                    <h2>Fetched Data</h2>
+                    <ul>
+                        {data.map((item) => (
+                            <li key={item.id}>{item.title}</li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        };
+
+        const MouseEventComponent = () => {
+            const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+            useEffect(() => {
+                const handleMouseMove = (event) => {
+                    setMousePosition({ x: event.clientX, y: event.clientY });
+                };
+
+                window.addEventListener('mousemove', handleMouseMove);
+
+                return () => {
+                    window.removeEventListener('mousemove', handleMouseMove);
+                };
+            }, []);
+
+            return (
+                <div>
+                    <h2>Mouse Position</h2>
+                    <p>X: {mousePosition.x}, Y: {mousePosition.y}</p>
+                </div>
+            );
+        };
+
+        const DocumentTitleComponent = () => {
+            const [count, setCount] = useState(0);
+
+            useEffect(() => {
+                document.title = `Count: ${count}`;
+            }, [count]);
+
+            return (
+                <div>
+                    <h2>Document Title</h2>
+                    <p>Count: {count}</p>
+                    <button onClick={() => setCount(count + 1)}>Increment Count</button>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <div>
+                    <h1>React useEffect Assignment</h1>
+                    <FetchDataComponent />
+                    <MouseEventComponent />
+                    <DocumentTitleComponent />
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
